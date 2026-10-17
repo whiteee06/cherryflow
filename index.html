@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><radialGradient id='g1' cx='35%' cy='35%' r='65%'><stop offset='0%' stop-color='%23ff6b81'/><stop offset='40%' stop-color='%23e11d48'/><stop offset='100%' stop-color='%234c0519'/></radialGradient><linearGradient id='mc' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2364748b'/><stop offset='100%' stop-color='%230f172a'/></linearGradient><path d='M 68,22 A 38,38 0 1,0 68,78 L 78,66 A 25,25 0 1,1 78,34 Z' fill='url(%23mc)'/><path d='M 44,58 L 54,48 L 62,52 L 74,36' stroke='%23f43f5e' stroke-width='4' stroke-linecap='round'/><path d='M 30,52 C 32,32 48,16 52,12' stroke='%23e2e8f0' stroke-width='3'/><path d='M 52,12 C 60,8 70,10 72,16 C 62,20 54,16 52,12 Z' fill='%23e11d48'/><circle cx='28' cy='58' r='15' fill='url(%23g1)'/><circle cx='42' cy='62' r='14' fill='url(%23g1)'/></svg>" />
+
+    <!-- Primary Meta Tags -->
+    <title>CherryFlow OS – AI-Powered Business Operating System</title>
+    <meta name="title" content="CherryFlow OS – AI-Powered Business Operating System" />
+    <meta name="description" content="All-in-one AI-powered platform for small businesses, agencies, and freelancers. Manage CRM, tasks, notes, billing, marketing, and team collaboration with Gemini AI." />
+    <meta name="keywords" content="CRM, AI Copilot, Task Management, Business OS, Agencies, Freelancers, Invoicing, Automation, Supabase, Gemini AI" />
+    <meta name="author" content="CherryFlow Technologies" />
+    <meta name="theme-color" content="#e11d48" />
+
+    <!-- PWA & Mobile Web App Capabilities -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CherryFlow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cherryflow.app/" />
+    <meta property="og:title" content="CherryFlow OS – AI-Powered Business Operating System" />
+    <meta property="og:description" content="All-in-one AI-powered platform for small businesses, agencies, and freelancers. Streamline sales pipelines, tasks, notes, and team collaboration." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80" />
+
+    <!-- Twitter Cards -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://cherryflow.app/" />
+    <meta property="twitter:title" content="CherryFlow OS – AI-Powered Business Operating System" />
+    <meta property="twitter:description" content="All-in-one AI-powered platform for small businesses, agencies, and freelancers. Streamline sales pipelines, tasks, notes, and team collaboration." />
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "CherryFlow OS",
+      "operatingSystem": "Web, iOS, Android, macOS, Windows",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "19.00",
+        "priceCurrency": "USD"
+      },
+      "description": "All-in-one business operating system powered by Google Gemini AI and Supabase."
+    }
+    </script>
+  </head>
+  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-rose-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Register PWA Service Worker in production
+      if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then((reg) => {
+            console.log('[CherryFlow SW] Registered with scope:', reg.scope);
+          }).catch((err) => {
+            console.warn('[CherryFlow SW] Registration failed:', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

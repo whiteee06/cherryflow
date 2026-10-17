@@ -1,0 +1,25 @@
+{
+  "short_name": "CherryFlow",
+  "name": "CherryFlow OS - AI-Powered Business Operating System",
+  "description": "All-in-one business management, CRM, task tracking, note-taking, and AI business copilot.",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#030712",
+  "theme_color": "#e11d48",
+  "display": "standalone",
+  "orientation": "any",
+  "categories": ["business", "productivity", "utilities"]
+}

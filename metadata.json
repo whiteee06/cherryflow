@@ -1,0 +1,6 @@
+{
+  "name": "CherryFlow",
+  "description": "AI-Powered Business Operating System for small businesses, agencies, and freelancers to manage customers, tasks, notes, and business analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
