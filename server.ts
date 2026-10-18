@@ -9,7 +9,7 @@ import integrationGuideRouter from './server/integrationGuideRouter';
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 // Security Middleware: Set Security Headers
 app.use((req, res, next) => {
@@ -455,6 +455,8 @@ function validateProductionCorsConfig() {
   }
 }
 
+let serverInstance: any;
+
 // Setup Vite development server or serve static files in production
 async function startServer() {
   validateProductionCorsConfig();
@@ -474,12 +476,31 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  serverInstance = app.listen(PORT, '0.0.0.0', () => {
     console.log(`CherryFlow Enterprise Backend running on http://0.0.0.0:${PORT}`);
   });
 }
 
-// Process-level resilience against crashes
+// Process-level resilience & Graceful Shutdown for Cloud Run
+function gracefulShutdown(signal: string) {
+  console.log(`[Server] ${signal} signal received. Draining connections...`);
+  if (serverInstance) {
+    serverInstance.close(() => {
+      console.log('[Server] HTTP server closed cleanly.');
+      process.exit(0);
+    });
+    setTimeout(() => {
+      console.warn('[Server] Forcefully shutting down process after timeout.');
+      process.exit(1);
+    }, 8000);
+  } else {
+    process.exit(0);
+  }
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
 process.on('uncaughtException', (err) => {
   console.error('[Server] Uncaught Exception:', err);
 });
