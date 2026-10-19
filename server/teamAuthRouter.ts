@@ -88,6 +88,16 @@ router.post('/create-member', async (req: Request, res: Response) => {
     return res.json(result);
   } catch (error: any) {
     console.error('Error in /api/team/create-member:', error);
+    if (
+      error.message?.includes('already exists') ||
+      error.message?.includes('already a member') ||
+      error.message?.includes('already registered')
+    ) {
+      return res.status(409).json({
+        error: error.message,
+        code: 'EMAIL_ALREADY_EXISTS',
+      });
+    }
     return res.status(500).json({ error: error.message || 'Failed to create team member.' });
   }
 });

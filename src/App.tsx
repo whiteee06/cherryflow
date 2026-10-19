@@ -74,9 +74,7 @@ import { TaskModal } from './components/tasks/TaskModal';
 import { NotesManager } from './components/notes/NotesManager';
 import { NoteModal } from './components/notes/NoteModal';
 
-// AI Copilot & Settings
-import { AICopilotDrawer } from './components/ai/AICopilotDrawer';
-import { AIBusinessAssistant } from './components/copilot/AIBusinessAssistant';
+// Profile & Settings
 import { ProfileSettings } from './components/profile/ProfileSettings';
 import { LandingPageView } from './components/landing/LandingPageView';
 import { AboutPage } from './components/about/AboutPage';
@@ -205,7 +203,6 @@ function OperatingSystemContent() {
   const [activities, setActivities] = useState<ActivityLog[]>(loadActivities);
 
   // Modal Visibility States
-  const [isAICopilotOpen, setIsAICopilotOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Customer Modals
@@ -607,7 +604,6 @@ function OperatingSystemContent() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onOpenSearchModal={() => setIsSearchModalOpen(true)}
-          onOpenAICopilot={() => setIsAICopilotOpen(true)}
           onOpenAddCustomer={() => {
             setEditingCustomer(null);
             setIsCustomerModalOpen(true);
@@ -719,14 +715,8 @@ function OperatingSystemContent() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setIsAICopilotOpen(true)}
-                    className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-lg shadow-rose-600/30 flex items-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Run AI Copilot Audit</span>
-                  </button>
+                <div className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs">
+                  Free Unlimited Workspace Plan
                 </div>
               </div>
 
@@ -779,7 +769,6 @@ function OperatingSystemContent() {
                   setEditingNote(null);
                   setIsNoteModalOpen(true);
                 }}
-                onOpenAICopilot={() => setIsAICopilotOpen(true)}
               />
 
               {/* Recent Activity Stream */}
@@ -881,23 +870,6 @@ function OperatingSystemContent() {
               <AutomationsDashboardView
                 onNotificationsUpdated={reloadNotifications}
                 workspaceId="ws_default_1"
-              />
-            </div>
-          )}
-
-          {/* AI COPILOT FULL TAB */}
-          {currentTab === 'copilot' && (
-            <div className="animate-in fade-in">
-              <AIBusinessAssistant
-                customers={customers}
-                notes={notes}
-                onRefreshTasksAndNotes={async () => {
-                  const refreshedTasks = await TaskService.getTasks({ includeArchived: true });
-                  setTasks(refreshedTasks);
-                  const refreshedNotes = loadNotes();
-                  setNotes(refreshedNotes);
-                  setActivities(loadActivities());
-                }}
               />
             </div>
           )}
@@ -1057,15 +1029,6 @@ function OperatingSystemContent() {
         onClose={() => setIsNoteModalOpen(false)}
         onSave={handleSaveNote}
         note={editingNote}
-      />
-
-      <AICopilotDrawer
-        isOpen={isAICopilotOpen}
-        onClose={() => setIsAICopilotOpen(false)}
-        customers={customers}
-        tasks={tasks}
-        notes={notes}
-        overview={overviewMetrics}
       />
 
       <NotificationDrawer

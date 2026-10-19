@@ -13,6 +13,7 @@ import {
   Star,
   Check,
   Building,
+  Building2,
   Sparkles,
   Database,
   BarChart3,
@@ -90,11 +91,11 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-5xl mx-auto leading-[1.1]">
-            Run Your Entire Business with <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-rose-500 to-rose-300">AI Intelligence & Speed</span>
+            Run Your Entire Business with <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-rose-500 to-rose-300">Zero Cost & Full Speed</span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            Manage clients, tasks, strategy notes, and revenue growth from one unified platform. Powered by Supabase, Gemini AI, and real-time execution.
+            Manage clients, tasks, strategy notes, and revenue growth from one unified platform. 100% Free Forever, powered by Supabase and real-time execution.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -102,7 +103,7 @@ export const LandingPage: React.FC = () => {
               onClick={() => setScreen('register')}
               className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-base shadow-xl shadow-rose-950/60 hover:shadow-rose-900/60 transition-all transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
             >
-              <span>Start 14-Day Free Trial</span>
+              <span>Get Started Free</span>
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
@@ -117,9 +118,9 @@ export const LandingPage: React.FC = () => {
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto text-left">
             {[
               { label: 'Revenue Managed', val: '$4.2M+' },
-              { label: 'Tasks Automated', val: '120,000+' },
+              { label: 'Tasks Completed', val: '120,000+' },
               { label: 'Client Satisfaction', val: '99.4%' },
-              { label: 'Uptime Guarantee', val: '99.99%' },
+              { label: 'Subscription Fee', val: '$0 / Forever' },
             ].map((stat, i) => (
               <div key={i} className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
                 <p className="text-2xl font-bold text-white">{stat.val}</p>
@@ -138,7 +139,7 @@ export const LandingPage: React.FC = () => {
                 <span className="ml-2 text-xs font-mono text-slate-400">app.cherryflow.io/dashboard</span>
               </div>
               <span className="text-xs font-medium text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Active Workspace
+                <CheckCircle2 className="w-3.5 h-3.5" /> Active Free Workspace
               </span>
             </div>
 
@@ -167,12 +168,12 @@ export const LandingPage: React.FC = () => {
 
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                 <div className="flex justify-between text-xs text-slate-400">
-                  <span>AI Copilot Status</span>
-                  <span className="text-xs text-rose-400 font-medium">Ready</span>
+                  <span>Plan Status</span>
+                  <span className="text-xs text-emerald-400 font-medium">Active</span>
                 </div>
-                <p className="text-2xl font-bold text-white">Gemini 2.5</p>
+                <p className="text-2xl font-bold text-white">Free Unlimited</p>
                 <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-rose-500 w-[95%]" />
+                  <div className="h-full bg-emerald-500 w-[100%]" />
                 </div>
               </div>
             </div>
@@ -191,7 +192,7 @@ export const LandingPage: React.FC = () => {
               Everything Your Agency or Startup Needs to Scale
             </p>
             <p className="mt-3 text-slate-400 text-sm">
-              Built ground-up with modular features for customer management, tasks, strategic notes, and executive AI guidance.
+              Built ground-up with modular features for customer management, tasks, strategic notes, and team collaboration.
             </p>
           </div>
 
@@ -200,22 +201,22 @@ export const LandingPage: React.FC = () => {
               {
                 icon: Users,
                 title: 'Smart CRM Hub',
-                desc: 'Track customer pipelines, deal values, lead statuses, contact history, and draft personalized AI outreach instantly.',
+                desc: 'Track customer pipelines, deal values, lead statuses, contact history, and manage accounts seamlessly.',
               },
               {
                 icon: BarChart3,
                 title: 'Kanban Task Engine',
-                desc: 'Manage priorities, subtasks, due dates, and auto-generate AI step-by-step task execution plans.',
+                desc: 'Manage priorities, subtasks, due dates, and streamline step-by-step execution across projects.',
               },
               {
                 icon: Brain,
                 title: 'Strategy Knowledge Notes',
-                desc: 'Pin strategic ideas, client meeting notes, financial goals, and let Gemini summarize key takeaways.',
+                desc: 'Pin strategic ideas, client meeting notes, financial goals, and organize knowledge in one place.',
               },
               {
-                icon: Bot,
-                title: 'Executive AI Copilot',
-                desc: 'Context-aware AI business consultant that analyzes your active metrics, clients, and tasks in real-time.',
+                icon: Building2,
+                title: 'Team Collaboration Hub',
+                desc: 'Multi-tenant workspace isolation with role-based permissions for owners, admins, and members.',
               },
             ].map((feat, i) => (
               <div
@@ -307,124 +308,55 @@ CREATE POLICY "Users can only access own business data"
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-rose-400 mb-2">
-              Simple Transparent Pricing
+              100% Free First Product Model
             </h2>
             <p className="text-3xl font-extrabold text-white sm:text-4xl">
-              Choose the Operating Tier For Your Scale
+              Zero Cost. Zero Subscription Fees. Full Access.
             </p>
-
-            {/* Monthly / Annual Toggle */}
-            <div className="mt-6 inline-flex items-center gap-3 p-1 rounded-full bg-slate-900 border border-slate-800">
-              <button
-                onClick={() => setBillingCycle('monthly')}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                  billingCycle === 'monthly'
-                    ? 'bg-rose-600 text-white shadow'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Monthly Billing
-              </button>
-              <button
-                onClick={() => setBillingCycle('annual')}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                  billingCycle === 'annual'
-                    ? 'bg-rose-600 text-white shadow'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Annual (20% Off)
-              </button>
-            </div>
+            <p className="text-xs text-slate-400 mt-2">
+              Every feature in Cherryflow is completely free for all users and workspace members.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                name: 'Starter Tier',
-                desc: 'Perfect for freelancers & solo operators.',
-                price: billingCycle === 'annual' ? '$19' : '$24',
-                features: [
-                  'Up to 100 Customers in CRM',
-                  'Kanban Task Boards & Subtasks',
-                  'Unlimited Strategy Notes',
-                  'Standard AI Prompts',
-                  'Single User Account',
-                ],
-                popular: false,
-              },
-              {
-                name: 'Pro Operating System',
-                desc: 'Ideal for growing agencies & startups.',
-                price: billingCycle === 'annual' ? '$49' : '$59',
-                features: [
-                  'Unlimited CRM Contacts & Deals',
-                  'Full AI Copilot Advisor (Gemini 2.5)',
-                  'Automated AI Outreach Drafting',
-                  'Role Access (Owner & Admins)',
-                  'Supabase RLS Cloud Sync',
-                  'Priority Support',
-                ],
-                popular: true,
-              },
-              {
-                name: 'Enterprise Scale',
-                desc: 'For multi-team organizations.',
-                price: billingCycle === 'annual' ? '$119' : '$149',
-                features: [
-                  'Unlimited Team Members',
-                  'Dedicated Supabase Database Instance',
-                  'Custom AI Workflows & Models',
-                  'Custom API & Webhooks',
-                  '24/7 SLA & Dedicated Manager',
-                ],
-                popular: false,
-              },
-            ].map((tier, i) => (
-              <div
-                key={i}
-                className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 ${
-                  tier.popular
-                    ? 'bg-slate-900 border-2 border-rose-500 shadow-2xl shadow-rose-950/40 relative transform hover:-translate-y-1'
-                    : 'bg-slate-900/60 border border-slate-800/80 hover:border-slate-700'
-                }`}
-              >
-                {tier.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider shadow">
-                    Most Popular
-                  </div>
-                )}
+          <div className="max-w-xl mx-auto">
+            <div className="rounded-3xl p-8 bg-slate-900 border-2 border-rose-500 shadow-2xl shadow-rose-950/40 relative flex flex-col justify-between">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider shadow">
+                Free Forever
+              </div>
 
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
-                  <p className="text-xs text-slate-400 mb-6">{tier.desc}</p>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-4xl font-extrabold text-white">{tier.price}</span>
-                    <span className="text-xs text-slate-400">/ month</span>
-                  </div>
-
-                  <div className="space-y-3 mb-8">
-                    {tier.features.map((f, fi) => (
-                      <div key={fi} className="flex items-center gap-2.5 text-xs text-slate-300">
-                        <Check className="w-4 h-4 text-rose-400 shrink-0" />
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-1 text-center">Cherryflow Free Unlimited</h3>
+                <p className="text-xs text-slate-400 mb-6 text-center">Complete business operating system for all founders and teams.</p>
+                <div className="flex items-baseline justify-center gap-1 mb-6">
+                  <span className="text-5xl font-extrabold text-white">$0</span>
+                  <span className="text-xs text-slate-400">/ forever</span>
                 </div>
 
-                <button
-                  onClick={() => setScreen('register')}
-                  className={`w-full py-3 rounded-xl font-medium text-xs transition-all cursor-pointer ${
-                    tier.popular
-                      ? 'bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white shadow-lg shadow-rose-950/50'
-                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                  }`}
-                >
-                  Start Free 14-Day Trial
-                </button>
+                <div className="space-y-3 mb-8">
+                  {[
+                    'Unlimited CRM Customers & Deals',
+                    'Kanban Task Boards, Subtasks & Priorities',
+                    'Strategy Knowledge Notes & Ideas',
+                    'Multi-Tenant Workspace & Team Invitations',
+                    'Role-Based Permissions (Owner, Admin, Member)',
+                    'Supabase RLS Data Isolation & Security',
+                    'Workflow Automations & Activity Logs',
+                  ].map((f, fi) => (
+                    <div key={fi} className="flex items-center gap-2.5 text-xs text-slate-300">
+                      <Check className="w-4 h-4 text-rose-400 shrink-0" />
+                      <span>{f}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+
+              <button
+                onClick={() => setScreen('register')}
+                className="w-full py-3.5 rounded-xl font-bold text-xs bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white shadow-lg shadow-rose-950/50 transition-all cursor-pointer text-center"
+              >
+                Create Your Free Account Now
+              </button>
+            </div>
           </div>
         </div>
       </section>

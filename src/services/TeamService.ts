@@ -315,9 +315,34 @@ export class TeamService {
     createdByEmail: string;
     tempPassword?: string;
   }): Promise<{ member: WorkspaceMember; tempPassword: string }> {
+    const cleanEmail = params.email.trim().toLowerCase();
+    const creatorEmail = params.createdByEmail ? params.createdByEmail.trim().toLowerCase() : '';
+
+    if (creatorEmail && cleanEmail === creatorEmail) {
+      throw new Error('You cannot add your own email address as a team member.');
+    }
+
     const existingMembers = await this.getMembers(params.workspaceId);
-    if (existingMembers.some((m) => m.email.toLowerCase() === params.email.toLowerCase())) {
-      throw new Error(`A team member with email "${params.email}" is already in this workspace.`);
+    if (existingMembers.some((m) => m.email.trim().toLowerCase() === cleanEmail)) {
+      throw new Error('An account with this email address is already a member of your workspace.');
+    }
+
+    const existingInvitations = await this.getInvitations(params.workspaceId);
+    const pendingInv = existingInvitations.find(
+      (i) => i.email.trim().toLowerCase() === cleanEmail && i.status === 'pending'
+    );
+    if (pendingInv) {
+      throw new Error('An invitation has already been sent to this email address.');
+    }
+
+    // Check if account already exists as a registered workspace owner / user
+    const usersRaw = localStorage.getItem('cherryflow_registered_users');
+    const existingUsers = usersRaw ? JSON.parse(usersRaw) : [];
+    const registeredUser = existingUsers.find(
+      (u: any) => u.email?.trim().toLowerCase() === cleanEmail
+    );
+    if (registeredUser) {
+      throw new Error('An account with this email address already exists. You cannot create a duplicate team member account.');
     }
 
     const tempPassword = params.tempPassword || generateTemporaryPassword();
@@ -341,8 +366,19 @@ export class TeamService {
           newMemberId = data.member.id || newMemberId;
           realUserId = data.member.userId || data.authUserId || realUserId;
         }
+      } else {
+        const errorData = await res.json().catch(() => null);
+        if (res.status === 409 || errorData?.code === 'EMAIL_ALREADY_EXISTS' || errorData?.error?.includes('already')) {
+          throw new Error(errorData?.error || 'An account with this email address already exists.');
+        }
+        if (errorData?.error) {
+          throw new Error(errorData.error);
+        }
       }
-    } catch (apiErr) {
+    } catch (apiErr: any) {
+      if (apiErr.message?.includes('already') || apiErr.message?.includes('cannot add')) {
+        throw apiErr;
+      }
       console.warn('API create-member fetch notice:', apiErr);
     }
 
@@ -374,8 +410,6 @@ export class TeamService {
     }
 
     // 3. Save account credentials in local user store for immediate login recognition
-    const usersRaw = localStorage.getItem('cherryflow_registered_users');
-    const existingUsers = usersRaw ? JSON.parse(usersRaw) : [];
     const existingIndex = existingUsers.findIndex(
       (u: any) => u.email.toLowerCase() === params.email.toLowerCase()
     );
@@ -534,9 +568,15 @@ export class TeamService {
     inviterEmail: string;
   }): Promise<WorkspaceInvitation> {
     const cleanEmail = params.email.trim().toLowerCase();
+    const inviterEmail = params.inviterEmail ? params.inviterEmail.trim().toLowerCase() : '';
+
+    if (inviterEmail && cleanEmail === inviterEmail) {
+      throw new Error('You cannot send a workspace invitation to your own email address.');
+    }
+
     const existingMembers = await this.getMembers(params.workspaceId);
     if (existingMembers.some((m) => m.email.trim().toLowerCase() === cleanEmail)) {
-      throw new Error('This user is already a member of your workspace.');
+      throw new Error('An account with this email address is already a member of your workspace.');
     }
 
     const existingInvitations = await this.getInvitations(params.workspaceId);

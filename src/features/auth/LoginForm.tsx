@@ -79,8 +79,8 @@ export const LoginForm: React.FC = () => {
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium text-rose-200">Authentication Error</p>
+              <div className="flex-1">
+                <p className="font-medium text-rose-200">Authentication Notice</p>
                 <p className="text-xs text-rose-300/90 mt-0.5">{error}</p>
               </div>
             </div>

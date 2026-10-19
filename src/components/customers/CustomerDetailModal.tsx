@@ -1,20 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Customer, Task } from '../../types';
 import { CustomerLTVCalculator } from './CustomerLTVCalculator';
 import {
   X,
   Building2,
-  Mail,
-  Phone,
-  DollarSign,
-  Tag,
-  Sparkles,
-  Send,
   CheckSquare,
-  Clock,
-  Copy,
-  Check,
-  Calendar
 } from 'lucide-react';
 
 interface CustomerDetailModalProps {
@@ -32,50 +22,9 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   currencySymbol = '$',
   onAddTaskForCustomer,
 }) => {
-  const [aiObjective, setAiObjective] = useState('');
-  const [aiOutreachResult, setAiOutreachResult] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [copied, setCopied] = useState(false);
-
   if (!customer) return null;
 
   const linkedTasks = tasks.filter((t) => t.customerId === customer.id);
-
-  const handleGenerateAIOutreach = async () => {
-    setIsGenerating(true);
-    setAiOutreachResult('');
-    try {
-      const res = await fetch('/api/ai/outreach', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName: customer.name,
-          company: customer.company,
-          status: customer.status,
-          dealValue: customer.dealValue,
-          notes: customer.notes,
-          objective: aiObjective || 'Follow up on proposal and schedule strategic sync meeting.',
-        }),
-      });
-
-      const data = await res.json();
-      if (data.result) {
-        setAiOutreachResult(data.result);
-      } else {
-        setAiOutreachResult('Error: Unable to generate outreach. Please ensure your Gemini key is configured.');
-      }
-    } catch (err: any) {
-      setAiOutreachResult(`Error generating AI outreach: ${err.message}`);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(aiOutreachResult);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in">
@@ -181,66 +130,6 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   <span className="text-[11px] text-zinc-400">Due: {t.dueDate}</span>
                 </div>
               ))}
-            </div>
-          )}
-        </div>
-
-        {/* AI Outreach Assistant Drawer */}
-        <div className="p-5 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-950 text-white border border-rose-900/40 shadow-xl">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles size={18} className="text-rose-400 animate-pulse" />
-              <h4 className="text-sm font-bold text-white">AI Outreach & Proposal Generator</h4>
-            </div>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-mono">
-              Powered by Gemini
-            </span>
-          </div>
-
-          <p className="text-xs text-zinc-400 mb-3">
-            Generate a customized sales proposal or check-in email tailored to {customer.name}&apos;s deal context.
-          </p>
-
-          <div className="flex gap-2 mb-3">
-            <input
-              type="text"
-              placeholder="e.g. Propose 15% Q3 retainer discount and schedule strategic review call"
-              value={aiObjective}
-              onChange={(e) => setAiObjective(e.target.value)}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-zinc-800/90 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-rose-500"
-            />
-            <button
-              onClick={handleGenerateAIOutreach}
-              disabled={isGenerating}
-              className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-rose-600/30 cursor-pointer"
-            >
-              {isGenerating ? (
-                <>
-                  <Clock size={14} className="animate-spin" /> Generating...
-                </>
-              ) : (
-                <>
-                  <Send size={14} /> Draft Email
-                </>
-              )}
-            </button>
-          </div>
-
-          {aiOutreachResult && (
-            <div className="mt-4 p-4 rounded-xl bg-zinc-800/90 border border-zinc-700/80 relative">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-700 text-xs font-semibold text-rose-400">
-                <span>Generated Outreach Copy</span>
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center gap-1 text-[11px] text-zinc-300 hover:text-white cursor-pointer"
-                >
-                  {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                  <span>{copied ? 'Copied!' : 'Copy to Clipboard'}</span>
-                </button>
-              </div>
-              <div className="text-xs text-zinc-200 leading-relaxed font-sans whitespace-pre-line max-h-60 overflow-y-auto">
-                {aiOutreachResult}
-              </div>
             </div>
           )}
         </div>

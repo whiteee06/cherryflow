@@ -20,236 +20,57 @@ const TAX_ADDRESS_STORAGE_KEY = 'cherryflow_billing_tax_address';
 
 export const DEFAULT_PLANS: SubscriptionPlan[] = [
   {
-    id: 'free',
-    name: 'Free',
-    description: 'Perfect for small teams and solo creators getting started.',
+    id: 'free_unlimited',
+    name: 'Free Unlimited Plan',
+    description: 'Full workspace access with unlimited features and zero subscription costs.',
     priceMonthly: 0,
     priceYearly: 0,
     currency: '$',
     features: [
-      'Up to 3 Team Seats',
-      '1 GB Cloud Storage',
-      '100 Monthly AI Credits',
-      'Basic CRM & Task Boards',
-      'Community Support',
-    ],
-    limits: {
-      users: 3,
-      storageGb: 1,
-      aiCredits: 100,
-      projects: 5,
-      customers: 25,
-      tasks: 100,
-    },
-    isActive: true,
-  },
-  {
-    id: 'starter',
-    name: 'Starter',
-    description: 'Essential toolkit for growing startups and agile teams.',
-    priceMonthly: 19,
-    priceYearly: 180,
-    currency: '$',
-    features: [
-      'Up to 10 Team Seats',
-      '10 GB Cloud Storage',
-      '1,000 Monthly AI Credits',
-      'Unlimited Tasks & Projects',
-      'Standard CRM Pipeline',
-      'Email Support (24h SLA)',
-    ],
-    limits: {
-      users: 10,
-      storageGb: 10,
-      aiCredits: 1000,
-      projects: 25,
-      customers: 250,
-      tasks: 1000,
-    },
-    isActive: true,
-  },
-  {
-    id: 'professional',
-    name: 'Professional',
-    description: 'Advanced capabilities, real-time collaboration, and priority AI.',
-    priceMonthly: 49,
-    priceYearly: 468,
-    currency: '$',
-    features: [
-      'Up to 25 Team Seats',
-      '50 GB Cloud Storage',
-      '5,000 Monthly AI Credits',
-      'Advanced Analytics & Reports',
-      'Custom CRM Automation',
-      'Realtime Workspace Sync',
-      'Priority Support',
-    ],
-    limits: {
-      users: 25,
-      storageGb: 50,
-      aiCredits: 5000,
-      projects: 100,
-      customers: 1000,
-      tasks: 5000,
-    },
-    isActive: true,
-    isPopular: true,
-  },
-  {
-    id: 'business',
-    name: 'Business',
-    description: 'High performance scale for established businesses and agencies.',
-    priceMonthly: 149,
-    priceYearly: 1428,
-    currency: '$',
-    features: [
-      'Up to 100 Team Seats',
-      '250 GB Cloud Storage',
-      '25,000 Monthly AI Credits',
-      'Custom Domain Integration',
-      'Dedicated Account Manager',
-      'Audit Logging & RLS Policies',
-      '99.9% Uptime Guarantee SLA',
-    ],
-    limits: {
-      users: 100,
-      storageGb: 250,
-      aiCredits: 25000,
-      projects: 500,
-      customers: 5000,
-      tasks: 25000,
-    },
-    isActive: true,
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    description: 'Bespoke security, unlimited scale, SSO, and custom AI fine-tuning.',
-    priceMonthly: 399,
-    priceYearly: 3828,
-    currency: '$',
-    features: [
       'Unlimited Team Seats',
-      '1,000 GB Cloud Storage',
-      '100,000 Monthly AI Credits',
-      'Custom LLM Fine-tuning',
-      'SSO & SAML Security',
-      'SOC2 Type II Compliance',
-      '24/7 Dedicated Support',
+      'Unlimited Workspace Projects',
+      'Full CRM & Task Management',
+      'Unlimited Storage & Notes',
+      'Workflow Automations Engine',
+      '100% Free Forever (No Credit Card Required)',
     ],
     limits: {
       users: 9999,
-      storageGb: 1000,
-      aiCredits: 100000,
+      storageGb: 9999,
+      aiCredits: 0,
       projects: 9999,
       customers: 99999,
       tasks: 99999,
     },
     isActive: true,
-    isEnterprise: true,
   },
 ];
 
 export class BillingService {
   // --- PLANS MANAGEMENT ---
   static async getPlans(): Promise<SubscriptionPlan[]> {
-    const local = localStorage.getItem(PLANS_STORAGE_KEY);
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        console.error('Failed to parse local plans:', e);
-      }
-    }
-
-    if (isSupabaseConfigured && supabase) {
-      try {
-        const { data, error } = await supabase.from('plans').select('*').eq('is_active', true);
-        if (!error && data && data.length > 0) {
-          const mapped: SubscriptionPlan[] = data.map((p) => ({
-            id: p.id,
-            name: p.name,
-            description: p.description,
-            priceMonthly: Number(p.price_monthly),
-            priceYearly: Number(p.price_yearly),
-            currency: p.currency || '$',
-            features: p.features || [],
-            limits: {
-              users: p.limit_users,
-              storageGb: Number(p.limit_storage_gb),
-              aiCredits: p.limit_ai_credits,
-              projects: p.limit_projects,
-              customers: p.limit_customers,
-              tasks: p.limit_tasks,
-            },
-            isActive: p.is_active,
-            isPopular: p.is_popular,
-            isEnterprise: p.is_enterprise,
-          }));
-
-          localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(mapped));
-          return mapped;
-        }
-      } catch (e) {
-        console.error('Supabase fetch plans error:', e);
-      }
-    }
-
-    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(DEFAULT_PLANS));
     return DEFAULT_PLANS;
   }
 
   static async saveCustomPlan(plan: SubscriptionPlan): Promise<SubscriptionPlan[]> {
-    const current = await this.getPlans();
-    const existingIndex = current.findIndex((p) => p.id === plan.id);
-
-    let updated: SubscriptionPlan[];
-    if (existingIndex >= 0) {
-      updated = [...current];
-      updated[existingIndex] = plan;
-    } else {
-      updated = [...current, plan];
-    }
-
-    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(updated));
-
-    ActivityService.logActivity(
-      'system',
-      'Updated Subscription Plan',
-      `Admin updated billing configuration for "${plan.name}" plan.`
-    );
-
-    return updated;
+    return DEFAULT_PLANS;
   }
 
   // --- SUBSCRIPTION STATUS ---
   static async getWorkspaceSubscription(workspaceId: string): Promise<WorkspaceSubscription> {
-    const key = `${SUBSCRIPTION_STORAGE_KEY}_${workspaceId}`;
-    const local = localStorage.getItem(key);
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        console.error('Failed to parse subscription:', e);
-      }
-    }
-
-    const defaultSub: WorkspaceSubscription = {
-      id: `sub_${Math.random().toString(36).substring(2, 9)}`,
+    return {
+      id: `sub_free_${workspaceId}`,
       workspaceId,
-      planId: 'professional',
-      planName: 'Professional',
+      planId: 'free_unlimited',
+      planName: 'Free Unlimited',
       status: 'active',
-      billingCycle: 'monthly',
+      billingCycle: 'yearly',
       currentPeriodStart: new Date().toISOString(),
-      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       cancelAtPeriodEnd: false,
-      provider: 'stripe',
+      provider: 'custom',
       createdAt: new Date().toISOString(),
     };
-
-    localStorage.setItem(key, JSON.stringify(defaultSub));
-    return defaultSub;
   }
 
   // --- UPGRADE / CHANGE PLAN ---

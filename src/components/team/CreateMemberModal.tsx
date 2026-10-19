@@ -48,6 +48,14 @@ export const CreateMemberModal: React.FC<CreateMemberModalProps> = ({
     e.preventDefault();
     if (!email.trim() || !fullName.trim()) return;
 
+    const cleanEmail = email.trim().toLowerCase();
+    const creatorEmail = currentUser?.email ? currentUser.email.trim().toLowerCase() : '';
+
+    if (creatorEmail && cleanEmail === creatorEmail) {
+      setError('You cannot create a team member account using your own workspace owner email address.');
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 

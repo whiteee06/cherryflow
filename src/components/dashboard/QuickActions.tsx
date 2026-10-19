@@ -1,18 +1,16 @@
 import React from 'react';
-import { Building2, CheckSquare, FileText, Sparkles, Zap } from 'lucide-react';
+import { Building2, CheckSquare, FileText, Zap } from 'lucide-react';
 
 interface QuickActionsProps {
   onOpenAddCustomer: () => void;
   onOpenAddTask: () => void;
   onOpenAddNote: () => void;
-  onOpenAICopilot: () => void;
 }
 
 export const QuickActions: React.FC<QuickActionsProps> = ({
   onOpenAddCustomer,
   onOpenAddTask,
   onOpenAddNote,
-  onOpenAICopilot,
 }) => {
   const actions = [
     {
@@ -36,13 +34,6 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
       color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20',
       onClick: onOpenAddNote,
     },
-    {
-      title: 'Launch AI Copilot',
-      subtitle: 'Smart insights & auto-drafting',
-      icon: Sparkles,
-      color: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/20',
-      onClick: onOpenAICopilot,
-    },
   ];
 
   return (
@@ -52,7 +43,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
         <h3 className="text-base font-bold text-zinc-900 dark:text-white">Quick Business Actions</h3>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {actions.map((act, idx) => {
           const Icon = act.icon;
           return (

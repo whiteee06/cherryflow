@@ -30,7 +30,7 @@ router.get('/public', (req: Request, res: Response) => {
       {
         id: 'sdks',
         title: 'Client SDK Installation',
-        codeSnippet: `npm install @supabase/supabase-js @google/genai`,
+        codeSnippet: `npm install @supabase/supabase-js`,
       },
       {
         id: 'webhooks',
@@ -194,9 +194,8 @@ router.get('/platform-admin', (req: Request, res: Response) => {
       serviceRoleKeyMasked: process.env.SUPABASE_SERVICE_ROLE_KEY
         ? `${process.env.SUPABASE_SERVICE_ROLE_KEY.slice(0, 10)}...${process.env.SUPABASE_SERVICE_ROLE_KEY.slice(-6)}`
         : 'Not Set (Using Anon Key Fallback)',
-      geminiApiKeyConfigured: Boolean(process.env.GEMINI_API_KEY),
       databaseConnectionPool: 'PostgreSQL Pool Active (Port 5432 / SSL Direct)',
-      globalCorsAllowedOrigins: ["'self'", 'https://*.supabase.co', 'https://generativelanguage.googleapis.com'],
+      globalCorsAllowedOrigins: ["'self'", 'https://*.supabase.co'],
       rateLimitMaxPerWindow: 300,
     },
   });

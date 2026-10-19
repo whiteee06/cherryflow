@@ -46,19 +46,11 @@ export async function getCurrentUser(): Promise<User | null> {
   if (!isSupabaseConfigured) return null;
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error) {
-      const isMissingSession =
-        error.name === 'AuthSessionMissingError' ||
-        error.message?.includes('Auth session missing') ||
-        error.message?.includes('session_not_found');
-      if (!isMissingSession) {
-        console.warn('Supabase getCurrentUser error:', error.message);
-      }
+    if (error || !user) {
       return null;
     }
     return user;
-  } catch (err) {
-    console.error('Error fetching current user:', err);
+  } catch {
     return null;
   }
 }
@@ -67,19 +59,11 @@ export async function getCurrentSession(): Promise<Session | null> {
   if (!isSupabaseConfigured) return null;
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
-    if (error) {
-      const isMissingSession =
-        error.name === 'AuthSessionMissingError' ||
-        error.message?.includes('Auth session missing') ||
-        error.message?.includes('session_not_found');
-      if (!isMissingSession) {
-        console.warn('Supabase getCurrentSession error:', error.message);
-      }
+    if (error || !session) {
       return null;
     }
     return session;
-  } catch (err) {
-    console.error('Error fetching current session:', err);
+  } catch {
     return null;
   }
 }

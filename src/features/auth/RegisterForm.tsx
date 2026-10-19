@@ -99,13 +99,18 @@ export const RegisterForm: React.FC = () => {
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium text-rose-200">Registration Issue</p>
-                <p className="text-xs text-rose-300/90 mt-0.5">
-                  {error.includes('Failed to fetch') || error.includes('NetworkError')
-                    ? 'Unable to connect to the registration service. Please verify your connection or try again.'
-                    : error}
-                </p>
+              <div className="flex-1">
+                <p className="font-medium text-rose-200">Registration Notice</p>
+                <p className="text-xs text-rose-300/90 mt-0.5">{error}</p>
+                {(error.includes('already exists') || error.includes('sign in')) && (
+                  <button
+                    type="button"
+                    onClick={() => setScreen('login')}
+                    className="mt-2 text-xs font-semibold px-3 py-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-500/30 rounded-lg transition-colors cursor-pointer"
+                  >
+                    Click here to Sign In →
+                  </button>
+                )}
               </div>
             </div>
           )}

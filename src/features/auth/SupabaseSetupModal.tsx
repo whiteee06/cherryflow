@@ -98,8 +98,7 @@ export const SupabaseSetupModal: React.FC = () => {
 
   const envSnippet = `# .env file or Environment Variables in AI Studio Secrets
 VITE_SUPABASE_URL="${import.meta.env.VITE_SUPABASE_URL || 'https://vedblbrrjxytdmkylzwf.supabase.co'}"
-VITE_SUPABASE_ANON_KEY="${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'}"
-GEMINI_API_KEY="AIzaSy..."`;
+VITE_SUPABASE_ANON_KEY="${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'}"`;
 
   const sqlMigrationSchema = `-- Enable Row Level Security (RLS) on all tables
 CREATE TABLE IF NOT EXISTS public.profiles (
@@ -431,17 +430,9 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
                     </pre>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                      <span className="font-bold text-slate-200">Gemini AI API Key Status</span>
-                      <p className="text-slate-400 font-mono">
-                        {guideData.platformSecrets.geminiApiKeyConfigured ? 'Server Key Active' : 'Fallback Active'}
-                      </p>
-                    </div>
-                    <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                      <span className="font-bold text-slate-200">Database Connection Pool</span>
-                      <p className="text-slate-400 font-mono">{guideData.platformSecrets.databaseConnectionPool}</p>
-                    </div>
+                  <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                    <span className="font-bold text-slate-200">Database Connection Pool</span>
+                    <p className="text-slate-400 font-mono">{guideData.platformSecrets.databaseConnectionPool}</p>
                   </div>
                 </div>
               ) : (

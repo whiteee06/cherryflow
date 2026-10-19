@@ -4,14 +4,12 @@ import { AnalyticsKpiCards } from '../analytics/AnalyticsKpiCards';
 import { RevenueAnalyticsTab } from '../analytics/RevenueAnalyticsTab';
 import { CustomerAnalyticsTab } from '../analytics/CustomerAnalyticsTab';
 import { ProductivityAnalyticsTab } from '../analytics/ProductivityAnalyticsTab';
-import { AIUsageAnalyticsTab } from '../analytics/AIUsageAnalyticsTab';
 import { ReportsAndExportTab } from '../analytics/ReportsAndExportTab';
 import {
   BarChart3,
   DollarSign,
   Users,
   CheckSquare,
-  Sparkles,
   FileText,
   Zap,
   Filter,
@@ -34,7 +32,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   currencySymbol = '$',
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<
-    'overview' | 'revenue' | 'customers' | 'productivity' | 'ai' | 'reports'
+    'overview' | 'revenue' | 'customers' | 'productivity' | 'reports'
   >('overview');
 
   const [timeframe, setTimeframe] = useState<TimeframePeriod>('all');
@@ -132,18 +130,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveSubTab('ai')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              activeSubTab === 'ai'
-                ? 'bg-rose-600 text-white shadow-md shadow-rose-600/20'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80'
-            }`}
-          >
-            <Sparkles size={15} />
-            AI Usage Logs
-          </button>
-
-          <button
             onClick={() => setActiveSubTab('reports')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               activeSubTab === 'reports'
@@ -186,8 +172,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
       {activeSubTab === 'productivity' && (
         <ProductivityAnalyticsTab tasks={tasks} />
       )}
-
-      {activeSubTab === 'ai' && <AIUsageAnalyticsTab />}
 
       {activeSubTab === 'reports' && (
         <ReportsAndExportTab customers={customers} tasks={tasks} notes={notes} currencySymbol={currencySymbol} />

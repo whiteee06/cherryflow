@@ -88,30 +88,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: Building2,
     },
     {
-      id: 'billing' as ViewTab,
-      label: 'Billing & Plans',
-      icon: CreditCard,
-      badge: 'SAAS',
-      badgeColor: 'bg-rose-500/20 text-rose-500 font-bold',
-    },
-    {
       id: 'automations' as ViewTab,
       label: 'Automations',
       icon: Zap,
       badge: 'AUTO',
       badgeColor: 'bg-amber-500/20 text-amber-500 font-bold',
-    },
-    {
-      id: 'copilot' as ViewTab,
-      label: 'AI Assistant',
-      icon: Sparkles,
-      badge: 'PRO',
-      badgeColor: 'bg-gradient-to-r from-rose-500 to-amber-500 text-white font-bold',
-    },
-    {
-      id: 'profile' as ViewTab,
-      label: 'Profile',
-      icon: User,
     },
     {
       id: 'settings' as ViewTab,
@@ -220,20 +201,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Bottom Banner & Logout */}
         <div className="p-4 border-t border-zinc-800/80 space-y-3">
           <div className="p-3.5 rounded-2xl bg-gradient-to-br from-zinc-800/90 to-zinc-900 border border-zinc-700/50 shadow-inner">
-            <div className="flex items-center gap-2 text-rose-400 mb-1.5">
-              <Zap size={15} className="fill-rose-400/20" />
-              <span className="text-xs font-semibold text-white">Cherry AI Active</span>
+            <div className="flex items-center gap-2 text-emerald-400 mb-1.5">
+              <Zap size={15} className="fill-emerald-400/20" />
+              <span className="text-xs font-semibold text-white">100% Free & Unlimited</span>
             </div>
-            <p className="text-[11px] text-zinc-400 leading-relaxed mb-3">
-              Automate customer follow-ups and break down goals into tasks in seconds.
+            <p className="text-[11px] text-zinc-400 leading-relaxed mb-1">
+              All CRM, task boards, team management, and workspace features are free for all users.
             </p>
-            <button
-              onClick={() => handleSelect('copilot')}
-              className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium border border-zinc-700/60 transition-colors cursor-pointer"
-            >
-              <TrendingUp size={13} className="text-rose-400" />
-              <span>Launch Copilot</span>
-            </button>
           </div>
 
           {onSignOut && (

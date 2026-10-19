@@ -74,7 +74,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
             Platform Operations & Global Governance
           </h1>
           <p className="text-xs sm:text-sm text-zinc-400">
-            Realtime performance metrics, multi-tenant workspace management, Gemini AI token consumption, and audit trails.
+            Realtime performance metrics, multi-tenant workspace management, zero-cost free plans, and audit trails.
           </p>
         </div>
 
@@ -204,28 +204,28 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
           </span>
         </div>
 
-        {/* Metric 4: AI Requests & Tokens */}
+        {/* Metric 4: Free First Product Engine */}
         <div
-          onClick={() => onSelectTab('ai')}
+          onClick={() => onSelectTab('workspaces')}
           className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-rose-500 transition-all cursor-pointer space-y-2 group"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-              Gemini AI Requests
+              Free Model Tier
             </span>
             <div className="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
-              <Bot className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-extrabold text-zinc-900 dark:text-white">
-              {metrics.aiRequests.toLocaleString()}
+              100% Free
             </span>
-            <span className="text-xs font-bold text-purple-600 dark:text-purple-400 font-mono">
-              89.4M Tokens
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+              Unlimited
             </span>
           </div>
-          <span className="text-[11px] text-zinc-400 block">Gemini 2.5 Flash Native</span>
+          <span className="text-[11px] text-zinc-400 block">No Paid Requirements</span>
         </div>
 
         {/* Metric 5: System Health */}
@@ -368,46 +368,40 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-lg text-zinc-900 dark:text-white">
-                  AI Copilot Token Consumption by Model
+                  Free Platform Workflow Operations
                 </h3>
-                <p className="text-xs text-zinc-500">Live API quota utilization across workspaces</p>
+                <p className="text-xs text-zinc-500">Feature utilization across workspaces</p>
               </div>
-              <button
-                onClick={() => onSelectTab('ai')}
-                className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
-              >
-                Configure Models & Limits →
-              </button>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
                 <div className="flex justify-between font-semibold mb-1">
-                  <span className="text-zinc-800 dark:text-zinc-200">Gemini 2.5 Flash (Primary)</span>
-                  <span className="text-purple-600 dark:text-purple-400 font-mono">72,400,000 tokens (81%)</span>
+                  <span className="text-zinc-800 dark:text-zinc-200">Customers & CRM Pipeline</span>
+                  <span className="text-purple-600 dark:text-purple-400 font-mono">100% Free Access</span>
                 </div>
                 <div className="w-full h-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full w-[81%]" />
+                  <div className="h-full bg-purple-600 rounded-full w-[100%]" />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between font-semibold mb-1">
-                  <span className="text-zinc-800 dark:text-zinc-200">Gemini 2.5 Pro (Deep Research / Custom)</span>
-                  <span className="text-rose-600 dark:text-rose-400 font-mono">14,200,000 tokens (16%)</span>
+                  <span className="text-zinc-800 dark:text-zinc-200">Tasks & Workflow Automations</span>
+                  <span className="text-rose-600 dark:text-rose-400 font-mono">100% Free Access</span>
                 </div>
                 <div className="w-full h-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-rose-600 rounded-full w-[16%]" />
+                  <div className="h-full bg-rose-600 rounded-full w-[100%]" />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between font-semibold mb-1">
-                  <span className="text-zinc-800 dark:text-zinc-200">Other / Experimental Pipelines</span>
-                  <span className="text-amber-600 dark:text-amber-400 font-mono">2,800,000 tokens (3%)</span>
+                  <span className="text-zinc-800 dark:text-zinc-200">Team Collaboration & Notes</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-mono">100% Free Access</span>
                 </div>
                 <div className="w-full h-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-500 rounded-full w-[3%]" />
+                  <div className="h-full bg-emerald-500 rounded-full w-[100%]" />
                 </div>
               </div>
             </div>
@@ -503,12 +497,12 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
                 <span className="font-mono text-emerald-400 font-bold">18% Allocated (Postgres)</span>
               </div>
               <div className="flex justify-between items-center py-1.5 border-b border-zinc-800">
-                <span className="text-zinc-400">Stripe Billing Webhook Relay</span>
+                <span className="text-zinc-400">Realtime Event Dispatcher</span>
                 <span className="font-mono text-emerald-400 font-bold">Operational</span>
               </div>
               <div className="flex justify-between items-center py-1.5 border-b border-zinc-800">
-                <span className="text-zinc-400">Gemini 2.5 API Gateways</span>
-                <span className="font-mono text-emerald-400 font-bold">Latency 42ms</span>
+                <span className="text-zinc-400">Supabase Auth Session Sync</span>
+                <span className="font-mono text-emerald-400 font-bold">Active</span>
               </div>
               <div className="flex justify-between items-center py-1.5">
                 <span className="text-zinc-400">Outbound SMTP Relay</span>

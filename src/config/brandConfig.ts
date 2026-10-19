@@ -18,7 +18,7 @@ export const BRAND_CONFIG = {
   companyName: 'CherryFlow Technologies',
   productName: 'CherryFlow',
   tagline: 'Automate. Organize. Grow.',
-  description: 'Helping businesses automate, organize, and grow with a unified AI-powered Business Operating System.',
+  description: 'Helping businesses automate, organize, and grow with a unified 100% Free Business Operating System.',
   
   founder: {
     name: 'Nithiarasu G',
@@ -63,7 +63,7 @@ export const BRAND_CONFIG = {
   quickLinks: [
     { label: 'Home', tab: 'dashboard' },
     { label: 'Features', tab: 'automations' },
-    { label: 'Pricing', tab: 'billing' },
+    { label: 'Free Access', tab: 'billing' },
     { label: 'Feedback', tab: 'feedback' },
     { label: 'Support', tab: 'feedback' },
     { label: 'About', tab: 'about' },
@@ -74,22 +74,20 @@ export const BRAND_CONFIG = {
     { label: 'Privacy Policy', path: '#privacy' },
     { label: 'Terms & Conditions', path: '#terms' },
     { label: 'Cookie Policy', path: '#cookies' },
-    { label: 'Refund Policy', path: '#refund' },
     { label: 'Security', path: '#security' },
   ] as LegalLinkItem[],
 
   about: {
-    summary: 'CherryFlow is an AI-powered Business Operating System designed to help businesses manage customers, tasks, projects, AI assistants, analytics, billing, team collaboration, and workflow automation in one unified platform.',
-    mission: 'Help every business become more productive through AI.',
-    vision: 'Become one of the world\'s leading AI-powered business platforms.',
+    summary: 'CherryFlow is a 100% Free Business Operating System designed to help businesses manage customers, tasks, projects, analytics, team collaboration, and workflow automation in one unified platform.',
+    mission: 'Empower every entrepreneur and team with zero-cost business software.',
+    vision: 'Become one of the world\'s leading open and free business platforms.',
     techStack: [
       'React 18 & TypeScript',
       'Tailwind CSS & Glassmorphism',
       'Express Node.js Server',
-      'Gemini AI Copilot Engine',
       'Supabase & Firestore Storage',
       'JWT Authentication & Row Level Security',
-      'Stripe & Razorpay Billing',
+      'Free Unlimited Multi-Tenant Workspaces',
     ],
     licenseNotice: '© 2026 CherryFlow Technologies. All Rights Reserved. Unauthorized copying, distribution or modification is prohibited.',
     securityNotice: 'Protected by Supabase, JWT Authentication, Row Level Security & End-to-End Security Architecture',

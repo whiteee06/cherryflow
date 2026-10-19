@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Users, CheckSquare, FileText, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, CheckSquare, FileText, Building2 } from 'lucide-react';
 import { ViewTab } from '../types';
 
 interface MobileBottomNavProps {
@@ -18,7 +18,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     { id: 'customers' as ViewTab, label: 'CRM', icon: Users },
     { id: 'tasks' as ViewTab, label: 'Tasks', icon: CheckSquare, badge: pendingTaskCount },
     { id: 'notes' as ViewTab, label: 'Notes', icon: FileText },
-    { id: 'copilot' as ViewTab, label: 'AI', icon: Sparkles },
+    { id: 'team' as ViewTab, label: 'Team', icon: Building2 },
   ];
 
   return (

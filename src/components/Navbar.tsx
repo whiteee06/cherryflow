@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Search,
-  Sparkles,
   Plus,
   Sun,
   Moon,
@@ -28,7 +27,6 @@ interface NavbarProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onOpenSearchModal: () => void;
-  onOpenAICopilot: () => void;
   onOpenAddCustomer: () => void;
   onOpenAddTask: () => void;
   onOpenAddNote: () => void;
@@ -51,7 +49,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   searchQuery,
   setSearchQuery,
   onOpenSearchModal,
-  onOpenAICopilot,
   onOpenAddCustomer,
   onOpenAddTask,
   onOpenAddNote,
@@ -91,16 +88,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Right section: Quick actions, Notifications, Theme, AI Copilot, User Profile */}
+      {/* Right section: Quick actions, Notifications, Theme, User Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* AI Copilot Button */}
-        <button
-          onClick={onOpenAICopilot}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white text-xs sm:text-sm font-medium shadow-md shadow-rose-600/20 hover:shadow-rose-600/30 active:scale-[0.98] transition-all cursor-pointer"
-        >
-          <Sparkles size={16} className="animate-pulse" />
-          <span className="hidden sm:inline">AI Copilot</span>
-        </button>
 
         {/* Quick Create Dropdown */}
         <div className="relative">

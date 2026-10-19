@@ -114,10 +114,18 @@ export class TeamMemberAuthService {
       return null;
     }
     const url = process.env.VITE_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const rawServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const isServiceKeyValid =
+      rawServiceKey &&
+      !rawServiceKey.includes('your-service-role-key') &&
+      rawServiceKey.startsWith('eyJ');
+
+    const serviceKey = isServiceKeyValid ? rawServiceKey : process.env.VITE_SUPABASE_ANON_KEY;
+
     if (!url || !serviceKey || url.includes('your-project') || serviceKey.includes('your-anon-key')) {
       return null;
     }
+
     // If remote host failed recently (e.g. non-resolving mock domain), skip immediately for responsive UX
     if (Date.now() - this.lastHostFailureTime < 60000) {
       return null;
@@ -133,7 +141,7 @@ export class TeamMemberAuthService {
           try {
             return await fetch(input, {
               ...init,
-              signal: init?.signal || AbortSignal.timeout(1500),
+              signal: init?.signal || AbortSignal.timeout(8000),
             });
           } catch (fetchErr: any) {
             TeamMemberAuthService.hostReachable = false;
@@ -394,9 +402,32 @@ export class TeamMemberAuthService {
     }
 
     const emailLower = email.trim().toLowerCase();
+
+    if (this.registeredEmails.has(emailLower)) {
+      throw new Error('An account with this email address already exists in the system. You cannot create a duplicate team member account.');
+    }
+
     const finalTempPassword = tempPassword || this.generateTemporaryPassword();
     const isReachable = await this.isSupabaseHostReachable();
     const supabaseAdmin = isReachable ? this.getSupabaseAdmin() : null;
+
+    if (supabaseAdmin) {
+      try {
+        const { data: existingWorkspaceMember } = await supabaseAdmin
+          .from('workspace_members')
+          .select('id')
+          .eq('workspace_id', workspaceId)
+          .eq('email', emailLower);
+
+        if (existingWorkspaceMember && existingWorkspaceMember.length > 0) {
+          throw new Error('An account with this email address is already a member of this workspace.');
+        }
+      } catch (checkErr: any) {
+        if (checkErr.message?.includes('already a member')) {
+          throw checkErr;
+        }
+      }
+    }
 
     let authUserId: string | null = null;
     let authNote = 'Local sandbox account provisioned';

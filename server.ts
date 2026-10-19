@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import superAdminRouter from './server/superAdmin';
 import teamAuthRouter from './server/teamAuthRouter';
@@ -21,7 +20,7 @@ app.use((req, res, next) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com; worker-src 'self' blob:;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self' blob:;"
   );
   next();
 });
@@ -161,22 +160,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Lazy initialization of GoogleGenAI SDK
-function getGeminiClient() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY environment variable is missing.');
-  }
-  return new GoogleGenAI({
-    apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      },
-    },
-  });
-}
-
 // Super Admin Authentication & Management API Routes
 app.use('/api/super-admin', superAdminRouter);
 
@@ -186,198 +169,10 @@ app.use('/api/team', teamAuthRouter);
 // Integration Guide Role-Based API Routes
 app.use('/api/integration-guide', integrationGuideRouter);
 
-// AI Service API Routes
-app.post('/api/ai/copilot', async (req, res) => {
-  try {
-    const { prompt, context } = req.body;
-    if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required.' });
-    }
-
-    const ai = getGeminiClient();
-    const systemInstruction = `You are CherryFlow AI, a world-class business copilot and strategic advisor for small business owners, agency directors, and freelancers.
-Provide concise, practical, actionable advice. Use markdown formatting with bullet points and bold headers when helpful.
-Context provided by user: ${JSON.stringify(context || {})}`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
-    });
-
-    return res.json({ result: response.text });
-  } catch (error: any) {
-    console.error('Error in /api/ai/copilot:', error);
-    return res.status(500).json({ error: error.message || 'Failed to process AI request.' });
-  }
-});
-
-app.post('/api/ai/outreach', async (req, res) => {
-  try {
-    const { customerName, company, status, dealValue, notes, objective } = req.body;
-    if (!customerName) {
-      return res.status(400).json({ error: 'Customer name is required.' });
-    }
-
-    const ai = getGeminiClient();
-    const prompt = `Write a highly professional, friendly, and convincing outreach email for a client named "${customerName}" at "${company || 'their organization'}".
-Details:
-- Current Status: ${status || 'Lead'}
-- Deal Value: $${dealValue || 0}
-- Objective: ${objective || 'Follow up on project proposal and schedule a discovery call'}
-- Notes/Context: ${notes || 'No extra notes provided.'}
-
-Provide a subject line and email body. Format nicely with markdown.`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-      config: {
-        systemInstruction: 'You are an expert sales and client communication strategist for modern businesses.',
-        temperature: 0.7,
-      },
-    });
-
-    return res.json({ result: response.text });
-  } catch (error: any) {
-    console.error('Error in /api/ai/outreach:', error);
-    return res.status(500).json({ error: error.message || 'Failed to generate outreach.' });
-  }
-});
-
-app.post('/api/ai/task-breakdown', async (req, res) => {
-  try {
-    const { taskTitle, description, priority } = req.body;
-    if (!taskTitle) {
-      return res.status(400).json({ error: 'Task title is required.' });
-    }
-
-    const ai = getGeminiClient();
-    const prompt = `Break down the business task "${taskTitle}" (Priority: ${priority || 'Medium'}, Details: ${description || 'None'}) into 3 to 5 clear, actionable sub-steps with estimated time duration in minutes. Return a JSON array of subtasks, where each item has "title" (string) and "estimatedMinutes" (number).`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        temperature: 0.3,
-      },
-    });
-
-    const jsonText = response.text ? response.text.trim() : '[]';
-    const subtasks = JSON.parse(jsonText);
-    return res.json({ subtasks });
-  } catch (error: any) {
-    console.error('Error in /api/ai/task-breakdown:', error);
-    return res.status(500).json({ error: error.message || 'Failed to breakdown task.' });
-  }
-});
-
-app.post('/api/ai/note-summary', async (req, res) => {
-  try {
-    const { title, content } = req.body;
-    if (!content) {
-      return res.status(400).json({ error: 'Note content is required.' });
-    }
-
-    const ai = getGeminiClient();
-    const prompt = `Analyze and format the following business note titled "${title || 'Untitled Note'}":
-${content}
-
-Provide:
-1. Executive Summary (2-3 key takeaways)
-2. Action Items (List of clear tasks derived from note)
-3. Key Decisions Made
-
-Use clear markdown headings.`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-      config: {
-        systemInstruction: 'You are an executive assistant summarizing business meetings and strategy notes.',
-        temperature: 0.5,
-      },
-    });
-
-    return res.json({ result: response.text });
-  } catch (error: any) {
-    console.error('Error in /api/ai/note-summary:', error);
-    return res.status(500).json({ error: error.message || 'Failed to summarize note.' });
-  }
-});
-
-// AI Chat Streaming Endpoint
-app.post('/api/ai/chat/stream', async (req, res) => {
-  try {
-    const { message, history, model, temperature, systemPrompt } = req.body;
-    if (!message) {
-      return res.status(400).json({ error: 'Message content is required.' });
-    }
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
-    const ai = getGeminiClient();
-    const selectedModel = model || 'gemini-3.6-flash';
-    const temp = typeof temperature === 'number' ? temperature : 0.7;
-    const sysInstruction =
-      systemPrompt ||
-      'You are CherryFlow AI Business Assistant, an expert business copilot helping founders, agency leaders, and sales directors grow their business.';
-
-    let contents: any[] = [];
-    if (Array.isArray(history) && history.length > 0) {
-      for (const msg of history) {
-        if (msg.role === 'user' || msg.role === 'assistant') {
-          contents.push({
-            role: msg.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: msg.content }],
-          });
-        }
-      }
-    }
-    contents.push({
-      role: 'user',
-      parts: [{ text: message }],
-    });
-
-    const responseStream = await ai.models.generateContentStream({
-      model: selectedModel,
-      contents: contents,
-      config: {
-        systemInstruction: sysInstruction,
-        temperature: temp,
-      },
-    });
-
-    for await (const chunk of responseStream) {
-      if (chunk.text) {
-        res.write(`data: ${JSON.stringify({ text: chunk.text })}\n\n`);
-      }
-    }
-
-    res.write('data: [DONE]\n\n');
-    res.end();
-  } catch (error: any) {
-    console.error('Error in /api/ai/chat/stream:', error);
-    if (!res.headersSent) {
-      return res.status(500).json({ error: error.message || 'Streaming failed.' });
-    } else {
-      res.write(`data: ${JSON.stringify({ error: error.message || 'Stream error occurred.' })}\n\n`);
-      res.end();
-    }
-  }
-});
-
 // DevOps Diagnostics & System Monitoring Endpoints
 app.get('/api/health', (req, res) => {
   const memoryUsage = process.memoryUsage();
   const uptimeSeconds = Math.floor((Date.now() - serverStartTime) / 1000);
-  const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
   const hasSupabaseUrl = Boolean(process.env.VITE_SUPABASE_URL);
 
   res.json({
@@ -388,7 +183,6 @@ app.get('/api/health', (req, res) => {
     uptimeSeconds,
     timestamp: new Date().toISOString(),
     services: {
-      geminiAi: hasGeminiKey ? 'configured' : 'missing_key',
       supabase: hasSupabaseUrl ? 'connected' : 'mock_local_mode',
       storage: 'ready',
     },
