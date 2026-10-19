@@ -3,7 +3,7 @@ import { UserProfile, AuthSession, AuthScreen } from '../types';
 import { AuthService } from '../services/authService';
 import { TeamService } from '../services/TeamService';
 import { SuperAdminService } from '../services/superAdminService';
-import { isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { LoginFormData, RegisterFormData } from '../features/auth/schemas';
 
 interface AuthContextType {
@@ -122,9 +122,35 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     window.addEventListener('popstate', handleUrlChange);
     window.addEventListener('hashchange', handleUrlChange);
+
+    let authSubscription: { unsubscribe: () => void } | null = null;
+    if (isSupabaseConfigured) {
+      const { data } = supabase.auth.onAuthStateChange((event, sbSession) => {
+        if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setUser(null);
+        } else if (event === 'TOKEN_REFRESHED' && sbSession) {
+          setSession((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  accessToken: sbSession.access_token,
+                  refreshToken: sbSession.refresh_token,
+                  expiresAt: sbSession.expires_at || Date.now() + 3600 * 1000,
+                }
+              : null
+          );
+        }
+      });
+      authSubscription = data.subscription;
+    }
+
     return () => {
       window.removeEventListener('popstate', handleUrlChange);
       window.removeEventListener('hashchange', handleUrlChange);
+      if (authSubscription) {
+        authSubscription.unsubscribe();
+      }
     };
   }, []);
 

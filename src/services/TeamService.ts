@@ -533,17 +533,18 @@ export class TeamService {
     inviterName: string;
     inviterEmail: string;
   }): Promise<WorkspaceInvitation> {
+    const cleanEmail = params.email.trim().toLowerCase();
     const existingMembers = await this.getMembers(params.workspaceId);
-    if (existingMembers.some((m) => m.email.toLowerCase() === params.email.toLowerCase())) {
-      throw new Error(`User with email ${params.email} is already a member of this workspace.`);
+    if (existingMembers.some((m) => m.email.trim().toLowerCase() === cleanEmail)) {
+      throw new Error('This user is already a member of your workspace.');
     }
 
     const existingInvitations = await this.getInvitations(params.workspaceId);
     const pendingInv = existingInvitations.find(
-      (i) => i.email.toLowerCase() === params.email.toLowerCase() && i.status === 'pending'
+      (i) => i.email.trim().toLowerCase() === cleanEmail && i.status === 'pending'
     );
     if (pendingInv) {
-      throw new Error(`An active pending invitation has already been sent to ${params.email}.`);
+      throw new Error('An invitation has already been sent to this email.');
     }
 
     const token = `inv_${Math.random().toString(36).substring(2, 10)}${Date.now().toString(36)}`;
@@ -553,14 +554,14 @@ export class TeamService {
       id: `inv-${Date.now()}`,
       workspaceId: params.workspaceId,
       workspaceName: params.workspaceName,
-      name: params.name || '',
-      email: params.email,
-      mobileNumber: params.mobileNumber || '',
-      department: params.department || 'General',
-      jobTitle: params.jobTitle || 'Team Member',
+      name: params.name?.trim() || '',
+      email: cleanEmail,
+      mobileNumber: params.mobileNumber?.trim() || '',
+      department: params.department?.trim() || 'General',
+      jobTitle: params.jobTitle?.trim() || 'Team Member',
       role: params.role,
       inviterName: params.inviterName,
-      inviterEmail: params.inviterEmail,
+      inviterEmail: params.inviterEmail.trim().toLowerCase(),
       token,
       status: 'pending',
       expiresAt,
@@ -574,14 +575,14 @@ export class TeamService {
       try {
         await supabase.from('workspace_invitations').insert({
           workspace_id: params.workspaceId,
-          name: params.name || '',
-          email: params.email,
-          mobile_number: params.mobileNumber || '',
-          department: params.department || 'General',
-          job_title: params.jobTitle || 'Team Member',
+          name: newInv.name,
+          email: cleanEmail,
+          mobile_number: newInv.mobileNumber,
+          department: newInv.department,
+          job_title: newInv.jobTitle,
           role: params.role,
           inviter_name: params.inviterName,
-          inviter_email: params.inviterEmail,
+          inviter_email: newInv.inviterEmail,
           token,
           expires_at: expiresAt,
         });
@@ -590,8 +591,8 @@ export class TeamService {
           invitation_id: newInv.id,
           workspace_id: params.workspaceId,
           action: 'sent',
-          performed_by_email: params.inviterEmail,
-          details: `Sent invitation to ${params.email} (${params.name || 'User'}) for role ${params.role.toUpperCase()}`,
+          performed_by_email: newInv.inviterEmail,
+          details: `Sent invitation to ${cleanEmail} (${newInv.name || 'User'}) for role ${params.role.toUpperCase()}`,
         });
       } catch (err) {
         console.warn('Supabase invitation send notice:', err);
@@ -604,15 +605,15 @@ export class TeamService {
       invitationId: newInv.id,
       workspaceId: params.workspaceId,
       action: 'sent',
-      performedByEmail: params.inviterEmail,
-      details: `Sent invitation to ${params.email} as ${params.role.toUpperCase()}`,
+      performedByEmail: newInv.inviterEmail,
+      details: `Sent invitation to ${cleanEmail} as ${params.role.toUpperCase()}`,
       createdAt: new Date().toISOString(),
     });
 
     ActivityService.logActivity(
       'system',
       'Sent Team Invitation',
-      `Invited ${params.email} to join ${params.workspaceName} as ${params.role.toUpperCase()}`
+      `Invited ${cleanEmail} to join ${params.workspaceName} as ${params.role.toUpperCase()}`
     );
 
     return newInv;
@@ -646,7 +647,7 @@ export class TeamService {
           workspaceId: data.workspace_id,
           workspaceName: data.workspaces?.name || 'CherryFlow Workspace',
           name: data.name || '',
-          email: data.email,
+          email: data.email?.trim().toLowerCase() || '',
           mobileNumber: data.mobile_number || '',
           department: data.department || '',
           jobTitle: data.job_title || '',
@@ -676,7 +677,7 @@ export class TeamService {
             if (found.status === 'cancelled') return { invitation: null, error: 'This invitation was cancelled.' };
             if (found.status === 'accepted') return { invitation: null, error: 'This invitation has already been used.' };
             if (new Date(found.expiresAt).getTime() < Date.now()) return { invitation: null, error: 'This invitation has expired.' };
-            return { invitation: found };
+            return { invitation: { ...found, email: found.email.trim().toLowerCase() } };
           }
         } catch {
           // ignore
@@ -700,37 +701,70 @@ export class TeamService {
       throw new Error(error || 'Invalid or expired invitation token.');
     }
 
-    const memberName = params.name || invitation.name || invitation.email.split('@')[0];
+    const cleanEmail = invitation.email.trim().toLowerCase();
+    const memberName = params.name?.trim() || invitation.name?.trim() || cleanEmail.split('@')[0];
 
     let userId = `usr_${Date.now()}`;
     let session: AuthSession;
     let userProfile: UserProfile;
 
     if (isSupabaseConfigured) {
-      const { data: authRes, error: signUpError } = await supabase.auth.signUp({
-        email: invitation.email,
-        password: params.password,
-        options: {
-          data: {
-            name: memberName,
-            role: invitation.role,
-            invitedWorkspaceId: invitation.workspaceId,
-          },
-        },
-      });
+      let authRes: any = null;
+      let signUpError: any = null;
 
-      if (signUpError) {
-        throw new Error(signUpError.message);
+      try {
+        const res = await supabase.auth.signUp({
+          email: cleanEmail,
+          password: params.password,
+          options: {
+            data: {
+              name: memberName,
+              role: invitation.role,
+              invitedWorkspaceId: invitation.workspaceId,
+            },
+          },
+        });
+        authRes = res.data;
+        signUpError = res.error;
+      } catch (err: any) {
+        signUpError = err;
       }
 
-      if (authRes.user) {
+      if (signUpError && (signUpError.message?.includes('already registered') || signUpError.message?.includes('already exists'))) {
+        try {
+          const syncRes = await fetch('/api/team/sync-member', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: cleanEmail, password: params.password }),
+          });
+
+          if (syncRes.ok) {
+            const signInRes = await supabase.auth.signInWithPassword({
+              email: cleanEmail,
+              password: params.password,
+            });
+            if (signInRes.data?.user) {
+              authRes = signInRes.data;
+              signUpError = null;
+            }
+          }
+        } catch (syncErr) {
+          console.warn('Sync existing user error during invitation acceptance:', syncErr);
+        }
+      }
+
+      if (signUpError && !authRes?.user) {
+        throw new Error(signUpError.message || 'Failed to complete registration for invitation.');
+      }
+
+      if (authRes?.user) {
         userId = authRes.user.id;
       }
 
       userProfile = {
         id: userId,
         name: memberName,
-        email: invitation.email,
+        email: cleanEmail,
         businessName: invitation.workspaceName || 'CherryFlow Enterprise',
         role: invitation.role,
         currency: '$',
@@ -740,24 +774,27 @@ export class TeamService {
       };
 
       session = {
-        accessToken: authRes.session?.access_token || `jwt_${Date.now()}`,
-        expiresAt: Date.now() + 86400 * 7 * 1000,
+        accessToken: authRes?.session?.access_token || `jwt_${Date.now()}`,
+        expiresAt: authRes?.session?.expires_at || Date.now() + 86400 * 7 * 1000,
         user: userProfile,
       };
 
-      // Add to workspace_members in Supabase
+      // Add to workspace_members in Supabase with upsert
       try {
-        await supabase.from('workspace_members').insert({
-          workspace_id: invitation.workspaceId,
-          user_id: userId,
-          name: memberName,
-          email: invitation.email,
-          role: invitation.role,
-          mobile_number: invitation.mobileNumber || '',
-          department: invitation.department || 'General',
-          job_title: invitation.jobTitle || 'Team Member',
-          status: 'active',
-        });
+        await supabase.from('workspace_members').upsert(
+          {
+            workspace_id: invitation.workspaceId,
+            user_id: userId,
+            name: memberName,
+            email: cleanEmail,
+            role: invitation.role,
+            mobile_number: invitation.mobileNumber || '',
+            department: invitation.department || 'General',
+            job_title: invitation.jobTitle || 'Team Member',
+            status: 'active',
+          },
+          { onConflict: 'workspace_id,email' }
+        );
 
         // Mark invitation as accepted
         await supabase
@@ -770,7 +807,7 @@ export class TeamService {
           workspace_id: invitation.workspaceId,
           action: 'accepted',
           performed_by: userId,
-          performed_by_email: invitation.email,
+          performed_by_email: cleanEmail,
           details: `${memberName} accepted invitation and joined workspace as ${invitation.role.toUpperCase()}`,
         });
       } catch (e) {
@@ -781,7 +818,7 @@ export class TeamService {
       userProfile = {
         id: userId,
         name: memberName,
-        email: invitation.email,
+        email: cleanEmail,
         businessName: invitation.workspaceName || 'CherryFlow Enterprise',
         role: invitation.role,
         currency: '$',
@@ -799,19 +836,26 @@ export class TeamService {
 
     // Local Storage Sync
     const localMembers = await this.getMembers(invitation.workspaceId);
-    localMembers.push({
-      id: `wm-${Date.now()}`,
+    const existingIdx = localMembers.findIndex((m) => m.email.trim().toLowerCase() === cleanEmail);
+    const newMemberRecord: WorkspaceMember = {
+      id: existingIdx >= 0 ? localMembers[existingIdx].id : `wm-${Date.now()}`,
       workspaceId: invitation.workspaceId,
       userId,
       name: memberName,
-      email: invitation.email,
+      email: cleanEmail,
       mobileNumber: invitation.mobileNumber,
       department: invitation.department,
       jobTitle: invitation.jobTitle,
       role: invitation.role,
       status: 'active',
       joinedAt: new Date().toISOString(),
-    });
+    };
+
+    if (existingIdx >= 0) {
+      localMembers[existingIdx] = newMemberRecord;
+    } else {
+      localMembers.push(newMemberRecord);
+    }
     localStorage.setItem(`${MEMBERS_STORAGE_KEY}_${invitation.workspaceId}`, JSON.stringify(localMembers));
 
     // Mark invitation accepted locally
@@ -831,7 +875,7 @@ export class TeamService {
       workspaceId: invitation.workspaceId,
       action: 'accepted',
       performedBy: userId,
-      performedByEmail: invitation.email,
+      performedByEmail: cleanEmail,
       details: `${memberName} joined the workspace as ${invitation.role.toUpperCase()}`,
       createdAt: new Date().toISOString(),
     });
@@ -839,7 +883,7 @@ export class TeamService {
     ActivityService.logActivity(
       'system',
       'Accepted Invitation',
-      `${memberName} (${invitation.email}) accepted invitation and joined workspace`
+      `${memberName} (${cleanEmail}) accepted invitation and joined workspace`
     );
 
     return { user: userProfile, session, workspaceId: invitation.workspaceId };

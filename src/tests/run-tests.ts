@@ -81,7 +81,7 @@ import jwt from 'jsonwebtoken';
 
 const SUPER_ADMIN_USERNAME = 'cherry_06';
 const SUPER_ADMIN_RAW_PASS = '@amirthachinnathambi06';
-const hash = '$2b$10$Oi.IEcn/mLgcKLcJSohKNu3vnBLdGDfKOg83lpCH700TqN1rW.XMW';
+const hash = '$2b$10$qX.yX9cpGyzluhrWUpQAP.OjONyqdEXrFJVucJtW86XiZR9XRWVNK';
 
 // Password Hashing Check
 assert(bcrypt.compareSync(SUPER_ADMIN_RAW_PASS, hash), 'Bcrypt verifies Developer Super Admin password securely');
@@ -232,6 +232,80 @@ assert(!validateCorsStartupConfig(''), 'Rejects empty production CORS configurat
 assert(!validateCorsStartupConfig('*'), 'Rejects wildcard production CORS configuration');
 assert(!validateCorsStartupConfig('https://site.com,*'), 'Rejects mixed wildcard production CORS configuration');
 
+// 8. Supabase Session & Team Invitation Validation Suite
+console.log('\n[Suite 8] Supabase Session & Team Invitation Validation');
+
+// Missing Session vs Genuine Auth Error Handler
+function handleAuthSessionError(error: { name?: string; message?: string } | null): { isLoggedOut: boolean; shouldWarn: boolean; userMessage: string } {
+  if (!error) return { isLoggedOut: false, shouldWarn: false, userMessage: '' };
+  
+  const isMissingSession =
+    error.name === 'AuthSessionMissingError' ||
+    error.message?.includes('Auth session missing') ||
+    error.message?.includes('session_not_found');
+
+  if (isMissingSession) {
+    return { isLoggedOut: true, shouldWarn: false, userMessage: 'Unauthenticated' };
+  }
+
+  return {
+    isLoggedOut: false,
+    shouldWarn: true,
+    userMessage: error.message || 'Invalid email address or password. Please verify your credentials and try again.',
+  };
+}
+
+const missingSessionErr = { name: 'AuthSessionMissingError', message: 'Auth session missing!' };
+const invalidCredsErr = { name: 'AuthApiError', message: 'Invalid login credentials' };
+
+const missingResult = handleAuthSessionError(missingSessionErr);
+assert(missingResult.isLoggedOut && !missingResult.shouldWarn, 'Missing session is handled as normal logged-out state without error warnings');
+
+const invalidResult = handleAuthSessionError(invalidCredsErr);
+assert(!invalidResult.isLoggedOut && invalidResult.shouldWarn, 'Invalid credentials triggers genuine authentication error handling');
+
+// Email normalization and duplicate invitation prevention
+function validateWorkspaceInvitation(
+  email: string,
+  existingMembers: { email: string }[],
+  pendingInvitations: { email: string; status: string }[]
+): { allowed: boolean; message?: string } {
+  const cleanEmail = email.trim().toLowerCase();
+
+  const isMember = existingMembers.some((m) => m.email.trim().toLowerCase() === cleanEmail);
+  if (isMember) {
+    return { allowed: false, message: 'This user is already a member of your workspace.' };
+  }
+
+  const isPending = pendingInvitations.some(
+    (i) => i.email.trim().toLowerCase() === cleanEmail && i.status === 'pending'
+  );
+  if (isPending) {
+    return { allowed: false, message: 'An invitation has already been sent to this email.' };
+  }
+
+  return { allowed: true };
+}
+
+const members = [{ email: 'active.member@company.com' }];
+const pending = [{ email: 'pending.invite@company.com', status: 'pending' }];
+
+const duplicateMemberCheck = validateWorkspaceInvitation(' ACTIVE.MEMBER@company.com ', members, pending);
+assert(!duplicateMemberCheck.allowed && duplicateMemberCheck.message === 'This user is already a member of your workspace.', 'Rejects duplicate invitation for existing workspace member with exact message');
+
+const duplicatePendingCheck = validateWorkspaceInvitation('PENDING.INVITE@company.com', members, pending);
+assert(!duplicatePendingCheck.allowed && duplicatePendingCheck.message === 'An invitation has already been sent to this email.', 'Rejects duplicate invitation for pending invitee with exact message');
+
+const validNewInviteCheck = validateWorkspaceInvitation('new.user@company.com', members, pending);
+assert(validNewInviteCheck.allowed, 'Allows sending invitation to a new email address');
+
+// Independent cross-workspace invitations
+const workspaceA_members = [{ email: 'existing.user@gmail.com' }];
+const workspaceB_members: { email: string }[] = [];
+
+const crossWorkspaceCheck = validateWorkspaceInvitation('existing.user@gmail.com', workspaceB_members, []);
+assert(crossWorkspaceCheck.allowed, 'Allows an existing user to be invited to a different workspace independently');
+
 console.log('----------------------------------------------------');
 console.log(`SUMMARY: ${passedTests} passed, ${failedTests} failed.`);
 console.log('----------------------------------------------------\n');
@@ -241,4 +315,5 @@ if (failedTests > 0) {
 } else {
   console.log('🎉 All automated tests completed successfully!');
 }
+
 

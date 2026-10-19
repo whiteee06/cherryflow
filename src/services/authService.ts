@@ -49,7 +49,17 @@ export class AuthService {
     if (isSupabaseConfigured) {
       try {
         const { data, error } = await supabase.auth.getSession();
-        if (error || !data.session) return null;
+        if (error) {
+          const isMissingSession =
+            error.name === 'AuthSessionMissingError' ||
+            error.message?.includes('Auth session missing') ||
+            error.message?.includes('session_not_found');
+          if (!isMissingSession) {
+            console.warn('Supabase getSession error:', error.message);
+          }
+          return null;
+        }
+        if (!data?.session) return null;
 
         const sbUser = data.session.user;
         const profile: UserProfile = {

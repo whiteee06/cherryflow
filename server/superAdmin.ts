@@ -6,8 +6,8 @@ const router = Router();
 
 // Super Admin Configuration Constants
 const SUPER_ADMIN_USERNAME = process.env.SUPER_ADMIN_USERNAME || 'cherry_06';
-// Bcrypt hash for developer password
-const SUPER_ADMIN_PASSWORD_HASH = process.env.SUPER_ADMIN_PASSWORD_HASH || '$2b$10$Oi.IEcn/mLgcKLcJSohKNu3vnBLdGDfKOg83lpCH700TqN1rW.XMW';
+// Bcrypt hash for developer password (@amirthachinnathambi06)
+const SUPER_ADMIN_PASSWORD_HASH = process.env.SUPER_ADMIN_PASSWORD_HASH || '$2b$10$qX.yX9cpGyzluhrWUpQAP.OjONyqdEXrFJVucJtW86XiZR9XRWVNK';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'cherryflow_superadmin_secret_key_v1.1_enterprise';
 const MAX_FAILED_ATTEMPTS = 5;
